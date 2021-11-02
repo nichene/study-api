@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { promises as fs } from "fs";
 import winston from "winston";
@@ -22,6 +23,9 @@ global.logger = winston.createLogger({
 
 const app = express();
 app.use(express.json());
+
+// opening requests from all cross origin resources
+app.use(cors());
 
 app.use("/account", accountsRouter);
 
