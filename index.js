@@ -1,8 +1,10 @@
 import cors from "cors";
 import express from "express";
 import { promises as fs } from "fs";
+import swaggerUi from "swagger-ui-express";
 import winston from "winston";
 import accountsRouter from "./routes/accounts.js";
+import { swaggerDocument } from "./swagger-doc.js";
 
 const { readFile, writeFile } = fs;
 
@@ -23,6 +25,9 @@ global.logger = winston.createLogger({
 
 const app = express();
 app.use(express.json());
+
+// serving api documentation
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // opening requests from all cross origin resources
 app.use(cors());
