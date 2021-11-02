@@ -3,8 +3,6 @@ import { promises as fs } from "fs";
 
 const { readFile, writeFile } = fs;
 
-global.fileName = "accounts.json";
-
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
@@ -23,6 +21,8 @@ router.post("/", async (req, res, next) => {
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.send(account);
+
+    logger.info(`POST /account - ${JSON.stringify(account)}`);
   } catch (err) {
     next(err);
   }
@@ -34,6 +34,8 @@ router.get("/", async (_, res, next) => {
     delete data.nextId;
 
     res.send(data);
+
+    logger.info(`Get /account`);
   } catch (err) {
     next(err);
   }
@@ -47,6 +49,8 @@ router.get("/:id", async (req, res, next) => {
     );
 
     res.send(account);
+
+    logger.info(`Get /account/:id`);
   } catch (err) {
     next(err);
   }
@@ -62,12 +66,14 @@ router.delete("/:id", async (req, res, next) => {
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.end();
+
+    logger.info(`Delete /account/:id - ${req.params.id}`);
   } catch (err) {
     next(err);
   }
 });
 
-// full update of a resource
+// use put for full update of a resource
 router.put("/", async (req, res, next) => {
   try {
     let account = req.body;
@@ -80,12 +86,14 @@ router.put("/", async (req, res, next) => {
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.send(account);
+
+    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
   } catch (err) {
     next(err);
   }
 });
 
-// partial update of resource
+// use patch for partial update of resource
 router.patch("/updateBalance", async (req, res, next) => {
   try {
     let account = req.body;
@@ -98,6 +106,8 @@ router.patch("/updateBalance", async (req, res, next) => {
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.send(data.accounts[index]);
+
+    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
   } catch (err) {
     next(err);
   }
@@ -105,6 +115,7 @@ router.patch("/updateBalance", async (req, res, next) => {
 
 // will run for all endpoints above it
 router.use((err, req, res, next) => {
+  logger.error(`${req.method} ${req.baseUrl} - ${err.message}`);
   res.status(400).send({ error: err.message });
 });
 
