@@ -38,7 +38,7 @@ async function getAcountById(req, res, next) {
   }
 }
 
-async function deleteAcountById(req, res, next) {
+async function deleteAccountById(req, res, next) {
   try {
     await AccountService.deleteAcountById(req.params.id);
 
@@ -60,7 +60,7 @@ async function updateAccount(req, res, next) {
 
     res.send(await AccountService.updateAccount(account));
 
-    logger.info(`Put /account/:id - ${JSON.stringify(account, null, 2)}`);
+    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
   } catch (err) {
     next(err);
   }
@@ -76,7 +76,7 @@ async function updateBalance(req, res, next) {
 
     res.send(await AccountService.updateBalance(account));
 
-    logger.info(`Put /account/:id - ${JSON.stringify(account, null, 2)}`);
+    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
   } catch (err) {
     next(err);
   }
@@ -86,7 +86,7 @@ export default {
   createAccount,
   getAccounts,
   getAcountById,
-  deleteAcountById,
+  deleteAccountById,
   updateAccount,
   updateBalance,
 };

@@ -9,7 +9,7 @@ router.get("/", AccountController.getAccounts);
 
 router.get("/:id", AccountController.getAcountById);
 
-router.delete("/:id", AccountController.deleteAcountById);
+router.delete("/:id", AccountController.deleteAccountById);
 
 // use put for full update of a resource
 router.put("/", AccountController.updateAccount);

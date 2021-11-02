@@ -1,9 +1,11 @@
 import cors from "cors";
 import express from "express";
+import { graphqlHTTP } from "express-graphql";
 import { promises as fs } from "fs";
 import swaggerUi from "swagger-ui-express";
 import winston from "winston";
 import accountsRouter from "./routes/account.routes.js";
+import Schema from "./schema/index.js";
 import { swaggerDocument } from "./swagger-doc.js";
 
 const { readFile, writeFile } = fs;
@@ -24,6 +26,7 @@ global.logger = winston.createLogger({
 });
 
 const app = express();
+
 app.use(express.json());
 
 // serving api documentation
@@ -33,6 +36,15 @@ app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 
 app.use("/account", accountsRouter);
+
+// this app is serving the same roots also using graphql in the /graphql
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: Schema,
+    graphiql: true,
+  })
+);
 
 app.listen(3000, async () => {
   setup();
