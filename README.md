@@ -11,13 +11,13 @@ go to `localhost:3000/doc` and try it out on your browser
 ## endpoints and graphql
 Oops, this project serves endpoints and the same functions through graphql.
 
-so you can call
+so, you can hit
 `localhost:3000/account`
 to get all accounts
 
 OR
 
-call
+hit
 `localhost:3000/graphql` 
 and pass
 ```
