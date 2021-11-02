@@ -9,11 +9,16 @@ router.post("/", async (req, res, next) => {
   try {
     let account = req.body;
 
+    if (!account.name || account.balance == null) {
+      throw new Error("Name and balance are required.");
+    }
+
     const data = JSON.parse(await readFile(global.fileName));
 
     account = {
       id: data.nextId++,
-      ...account,
+      name: account.name,
+      balance: account.balance,
     };
 
     data.accounts.push(account);
@@ -78,16 +83,26 @@ router.put("/", async (req, res, next) => {
   try {
     let account = req.body;
 
+    if (!account.id || !account.name || account.balance == null) {
+      throw new Error("Id, name and balance are required.");
+    }
+
     const data = JSON.parse(await readFile(global.fileName));
 
     const index = data.accounts.findIndex((a) => a.id === account.id);
-    data.accounts[index] = account;
+
+    if (index === -1) {
+      throw new Error("Account not found.");
+    }
+
+    data.accounts[index].name = account.name;
+    data.accounts[index].balance = account.balance;
 
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.send(account);
 
-    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
+    logger.info(`Put /account/:id - ${JSON.stringify(account, null, 2)}`);
   } catch (err) {
     next(err);
   }
@@ -101,13 +116,22 @@ router.patch("/updateBalance", async (req, res, next) => {
     const data = JSON.parse(await readFile(global.fileName));
 
     const index = data.accounts.findIndex((a) => a.id === account.id);
+
+    if (!account.id || account.balance == null) {
+      throw new Error("Id and balance are required.");
+    }
+
+    if (index === -1) {
+      throw new Error("Account not found.");
+    }
+
     data.accounts[index].balance = account.balance;
 
     await writeFile(global.fileName, JSON.stringify(data, null, 2));
 
     res.send(data.accounts[index]);
 
-    logger.info(`Put /account/:id - ${JSON.stringify(account)}`);
+    logger.info(`Put /account/:id - ${JSON.stringify(account, null, 2)}`);
   } catch (err) {
     next(err);
   }
