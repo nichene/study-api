@@ -3,7 +3,7 @@ import express from "express";
 import { promises as fs } from "fs";
 import swaggerUi from "swagger-ui-express";
 import winston from "winston";
-import accountsRouter from "./routes/accounts.js";
+import accountsRouter from "./routes/account.routes.js";
 import { swaggerDocument } from "./swagger-doc.js";
 
 const { readFile, writeFile } = fs;
