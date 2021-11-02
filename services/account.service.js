@@ -1,76 +1,33 @@
-import { promises as fs } from "fs";
+import AccountRepository from "../repositories/account.repository.js";
 
-const { readFile, writeFile } = fs;
+// this file should contain your business logic
 
 async function createAccount(account) {
-  const data = JSON.parse(await readFile(global.fileName));
-
-  account = {
-    id: data.nextId++,
-    name: account.name,
-    balance: account.balance,
-  };
-
-  data.accounts.push(account);
-
-  await writeFile(global.fileName, JSON.stringify(data, null, 2));
-
-  return account;
+  return await AccountRepository.insertAccount(account);
 }
 
 async function getAccounts() {
-  const data = JSON.parse(await readFile(global.fileName));
-  delete data.nextId;
-
-  return data;
+  return await AccountRepository.getAccounts();
 }
 
 async function getAccountById(id) {
-  const data = JSON.parse(await readFile(global.fileName));
-  const account = data.accounts.find((account) => account.id === parseInt(id));
-
-  return account;
+  return await AccountRepository.getAccountById(id);
 }
 
 async function deleteAcountById(id) {
-  const data = JSON.parse(await readFile(global.fileName));
-  data.accounts = data.accounts.filter(
-    (account) => account.id !== parseInt(id)
-  );
-
-  await writeFile(global.fileName, JSON.stringify(data, null, 2));
+  return await AccountRepository.deleteAccountById(id);
 }
 
 async function updateAccount(account) {
-  const data = JSON.parse(await readFile(global.fileName));
-
-  const index = data.accounts.findIndex((a) => a.id === account.id);
-
-  if (index === -1) {
-    throw new Error("Account not found.");
-  }
-
-  data.accounts[index].name = account.name;
-  data.accounts[index].balance = account.balance;
-
-  await writeFile(global.fileName, JSON.stringify(data, null, 2));
-
-  return data.accounts[index];
+  return await AccountRepository.updateAccount(account);
 }
 
 async function updateBalance(account) {
-  const data = JSON.parse(await readFile(global.fileName));
-  const index = data.accounts.findIndex((a) => a.id === account.id);
+  const acc = await getAccountById(account.id);
 
-  if (index === -1) {
-    throw new Error("Account not found.");
-  }
+  acc.balance = account.balance;
 
-  data.accounts[index].balance = account.balance;
-
-  await writeFile(global.fileName, JSON.stringify(data, null, 2));
-
-  return data.accounts[index];
+  return await AccountRepository.updateAccount(acc);
 }
 
 export default {
